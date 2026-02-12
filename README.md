@@ -9,7 +9,7 @@ Global Agenda is a classic class-based MMO shooter originally developed by Hi-Re
 This launcher automates launching and logging in multiple game clients simultaneously (multiboxing), arranges windows, sends login credentials, and detects successful logins to manage the process.
 
 ### GUI Preview
-![Agendorks Launcher 2025 GUI](GALauncher2025_gui.png)
+![Agendorks Launcher 2025 GUI](GALauncher_gui.png)
 
 (The launcher features a dark-themed interface with fields for game path, credentials, client count, arguments, settings like windowed/bot mode, and a live log window at the bottom.)
 

@@ -1,7 +1,7 @@
 ﻿// Program.cs - single file (C# 3.0 / .NET Framework 3.5 compatible)
-// Agendorks Launcher 2025 - Final Working Version (December 15, 2025)
+// Agendorks Launcher 2026 - Final Working Version (February 12, 2026)
 
-using GALauncher2025.Properties;
+using GALauncher.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace GALauncher2025
+namespace GALauncher2026
 {
     internal static class VLog
     {
@@ -143,7 +143,7 @@ namespace GALauncher2025
 
         private const string DISCORDAPPID = "942352872585191445";
         private const string RPCSTATE = "Playing Global Agenda - Agendorks";
-        private const string RPCDETAILS = "Is playing via Multiloginscript-Launcher 2025...";
+        private const string RPCDETAILS = "Is playing via Multiloginscript-Launcher 2026...";
         private const string RPCLARGEIMAGEKEY = "gamelogo";
         private const string RPCLARGEIMAGETEXT = "Global Agenda - Agendorks active!";
 
@@ -308,7 +308,7 @@ namespace GALauncher2025
             Color bg = Color.FromArgb(26, 26, 30);
             Color fg = Color.Yellow;
 
-            Text = "Agendorks Launcher 2025";
+            Text = "Agendorks Launcher 2026";
             Size = new Size(760, 650);
             StartPosition = FormStartPosition.CenterScreen;
             Padding = new Padding(10);
@@ -751,16 +751,33 @@ namespace GALauncher2025
                     FileName = targetGameExe,
                     Arguments = targetGameArgs,
                     WorkingDirectory = Directory.GetCurrentDirectory(),
-                    UseShellExecute = false,
-                    CreateNoWindow = false
+                    UseShellExecute = true,  // <<< KEY CHANGE: de-elevates the game process
+                                             // CreateNoWindow = false  // Ignored when UseShellExecute=true; comment out or remove
                 };
 
-                Process p = Process.Start(psi);
+                // Explicitly ensure no elevation request
+                psi.Verb = null;
+
+                Process p = null;
+                try
+                {
+                    p = Process.Start(psi);
+                }
+                catch (Exception ex)
+                {
+                    Log("PROC: Failed to start game process: " + ex);
+                    continue;
+                }
+
                 if (p != null)
                 {
-                    try { p.WaitForInputIdle(5000); } catch { }
+                    try { p.WaitForInputIdle(10000); } catch { }  // Slightly longer timeout to be safe
                     lock (stateLock) clientList.Add(p);
-                    Log("PROC: Launched PID=" + p.Id);
+                    Log("PROC: Launched PID=" + p.Id + " (non-elevated)");
+                }
+                else
+                {
+                    Log("PROC: Process.Start returned null");
                 }
             }
 
